@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">MeowMinder</string>
+
+    <string name="empty">Empty</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="empty"></string>
+    <string name="today_tasks">Today tasks</string>
+    <string name="quote">If you can dream it, you can do it!</string>
+    <string name="no_task">No task to be \ndone today</string>
 </resources>
