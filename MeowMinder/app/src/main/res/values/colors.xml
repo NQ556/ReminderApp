@@ -10,5 +10,8 @@
 
     <color name="pink">#F3C3C1</color>
     <color name="blue">#A6B1CE</color>
+    <color name="switch_off_color">#E5E9EB</color>
     <color name="light_pink">#F5DEDE</color>
+    <color name="pink_2">#F2CFCD</color>
+    <color name="brown">#380824</color>
 </resources>

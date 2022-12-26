@@ -4,7 +4,24 @@
     <string name="empty">Empty</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
     <string name="today_tasks">Today tasks</string>
     <string name="quote">If you can dream it, you can do it!</string>
     <string name="no_task">No task to be \ndone today</string>
+
+    <string name="study">Study</string>
+
+    <string name="add_tasks">Add tasks</string>
+
+    <string name="title">Title</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="tasks">Tasks</string>
+    <string name="alarm">Alarm</string>
+    <string name="set_alarm">Set alarm</string>
+
+    <string name="input">Input here</string>
+    <string name="add">Add</string>
+    <string name="back">Back</string>
 </resources>

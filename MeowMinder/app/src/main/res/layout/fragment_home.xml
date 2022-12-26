@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/light_pink"
     tools:context=".HomeFragment">
     <LinearLayout
@@ -11,46 +11,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/home_header">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginStart="20dp">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/today_tasks"
-                        android:fontFamily="@font/oswald_medium"
-                        android:textColor="@color/blue"
-                        android:textSize="30sp"/>
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/paw"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="10dp"/>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/quote"
-                    android:fontFamily="@font/oswald_light"
-                    android:textColor="@color/blue"
-                    android:textSize="30sp"/>
-            </LinearLayout>
-        </RelativeLayout>
+            android:background="@drawable/home_header"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -58,9 +22,11 @@
             <LinearLayout
                 android:id="@+id/no_task_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_centerVertical="true"
                 android:gravity="center">
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -73,8 +39,8 @@
                     android:textAlignment="center"
                     android:textColor="@color/blue"
                     android:fontFamily="@font/oswald_medium"
-                    android:textSize="40sp"
-                    android:layout_marginStart="10dp"/>
+                    android:textSize="@dimen/_35ssp"
+                    android:layout_marginStart="@dimen/_10sdp"/>
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -83,4 +49,16 @@
                 android:layout_height="wrap_content"/>
         </RelativeLayout>
     </LinearLayout>
-</ScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:backgroundTint="@color/blue"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@color/white"/>
+</RelativeLayout>

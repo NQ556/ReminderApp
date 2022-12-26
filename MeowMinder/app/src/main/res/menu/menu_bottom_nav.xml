@@ -8,9 +8,6 @@
         android:title="@string/empty"
         android:icon="@drawable/calendar"/>
 
-    <item android:id="@+id/placeholder"
-        android:title="@string/empty"/>
-
     <item android:id="@+id/notification"
         android:title="@string/empty"
         android:icon="@drawable/notification"/>
