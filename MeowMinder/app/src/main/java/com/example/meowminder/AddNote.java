@@ -15,6 +15,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -28,6 +29,7 @@ import com.google.android.material.button.MaterialButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class AddNote extends AppCompatActivity implements ItemTouchHelperListener{
     private TextView backButton;
@@ -58,6 +60,9 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
     private int tmpMinute;
 
     private Calendar calendar;
+    public static final String CHANNEL_ID = "Test";
+    public static int index = 0;
+    private String TAG = "Hi";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,7 +204,7 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setAlarm();
+                setReminder();
             }
         });
     }
@@ -275,7 +280,7 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
             CharSequence name = "Channel_1";
             String description = getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("Test", name, importance);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
@@ -284,16 +289,33 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
         }
     }
 
-    private void setAlarm() {
+    private void setReminder() {
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(AddNote.this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddNote.this, 0, intent, 0);
+        Intent intent;
 
+        if (isAlarmOn)
+        {
+            intent = new Intent(AddNote.this, AlarmReceiver_2.class);
+            Log.d(TAG, "HERE");
+        }
+
+        else
+        {
+            intent = new Intent(AddNote.this, AlarmReceiver.class);
+        }
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddNote.this, getNotificationId(), intent, 0);
+
+        //Set date and time of the upcoming task
         Calendar myAlarmDate = Calendar.getInstance();
         myAlarmDate.setTimeInMillis(System.currentTimeMillis());
         myAlarmDate.set(tmpYear, tmpMonth, tmpDay, tmpHour, tmpMinute, 0);
-
+        Log.d(TAG, Integer.toString(index));
         alarmManager.set(AlarmManager.RTC_WAKEUP, myAlarmDate.getTimeInMillis(), pendingIntent);
         Toast.makeText(AddNote.this, "Set alarm successfully", Toast.LENGTH_SHORT).show();
+        loadHome();
+    }
+
+    private int getNotificationId() {
+        return (int) new Date().getTime();
     }
 }
