@@ -18,4 +18,31 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="date_picker_theme" parent="ThemeOverlay.AppCompat.Dialog">
+        <!--header background-->
+        <item name="colorAccent">@color/blue</item>
+        <!--calendar background-->
+        <item name="android:windowBackground">@color/white</item>
+        <!--selected day-->
+        <item name="android:colorControlActivated">@color/blue</item>
+        <!--days of the month-->
+        <item name="android:textColorPrimary">@color/blue</item>
+        <!--days of the week-->
+        <item name="android:textColorSecondary">@color/blue</item>
+        <!--button-->
+        <item name="android:buttonBarNegativeButtonStyle">@style/button_color</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/button_color</item>
+    </style>
+
+    <style name="button_color" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="time_picker_theme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/blue</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/button_color</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/button_color</item>
+    </style>
 </resources>

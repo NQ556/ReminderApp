@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -43,6 +43,7 @@
                     android:layout_marginStart="@dimen/_15sdp"/>
 
                 <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/title_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_15sdp"
@@ -71,6 +72,7 @@
                     android:layout_marginTop="@dimen/_15sdp"/>
 
                 <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/date"
                     android:layout_width="@dimen/_160sdp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_15sdp"
@@ -78,9 +80,12 @@
                     android:drawableTint="@color/pink"
                     android:backgroundTint="@color/pink"
                     android:textColor="@color/brown"
-                    android:inputType="date"
                     android:textSize="@dimen/_15ssp"
-                    android:fontFamily="@font/oswald_regular"/>
+                    android:fontFamily="@font/oswald_regular"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,6 +102,7 @@
                     android:layout_marginTop="@dimen/_15sdp"/>
 
                 <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/time"
                     android:layout_width="@dimen/_160sdp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_15sdp"
@@ -106,7 +112,11 @@
                     android:textColor="@color/brown"
                     android:inputType="time"
                     android:textSize="@dimen/_15ssp"
-                    android:fontFamily="@font/oswald_regular"/>
+                    android:fontFamily="@font/oswald_regular"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -132,10 +142,12 @@
             android:layout_marginEnd="@dimen/_15sdp"/>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/task_rcv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_15sdp"/>
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:nestedScrollingEnabled="false"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -144,18 +156,20 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginStart="@dimen/_15sdp">
             <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/task_input"
                 android:layout_width="@dimen/_160sdp"
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/ic_edit"
                 android:drawableTint="@color/pink"
                 android:backgroundTint="@color/pink"
                 android:textColor="@color/brown"
-                android:inputType="date"
+                android:inputType="text"
                 android:textSize="@dimen/_15ssp"
                 android:fontFamily="@font/oswald_regular"
                 android:hint="@string/input"/>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/pink"
@@ -198,7 +212,7 @@
                 android:layout_gravity="center_vertical"/>
 
             <Switch
-                android:id="@+id/dark_mode_switch"
+                android:id="@+id/alarm_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:track="@drawable/custom_track"
@@ -208,6 +222,7 @@
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/done_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/done_button"
@@ -225,4 +240,4 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/_15sdp"/>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

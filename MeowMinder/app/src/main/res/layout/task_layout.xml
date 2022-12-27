@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/_150sdp"
-    android:layout_height="@dimen/_30sdp"
-    android:background="@drawable/note"
-    android:gravity="center_vertical">
-    <TextView
-        android:id="@+id/task"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="This is a test text"
-        android:textColor="@color/white"
-        android:fontFamily="@font/oswald_regular"
-        android:textSize="@dimen/_10ssp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:layout_marginStart="@dimen/_15sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:layout_marginEnd="@dimen/_15sdp"/>
-</RelativeLayout>
+        android:layout_height="@dimen/_30sdp"
+        android:background="@drawable/delete_bg">
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_delete"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_5sdp"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:background="@drawable/task"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/task_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/white"
+            android:fontFamily="@font/oswald_regular"
+            android:textSize="@dimen/_15ssp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_25sdp"/>
+    </LinearLayout>
+</FrameLayout>

@@ -24,4 +24,7 @@
     <string name="input">Input here</string>
     <string name="add">Add</string>
     <string name="back">Back</string>
+
+    <string name="channel_name">Test</string>
+    <string name="channel_description">This is a test notification</string>
 </resources>
