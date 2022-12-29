@@ -2,10 +2,9 @@ package com.example.meowminder;
 
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.provider.Settings;
 
 public class RingtoneControl {
-    private static RingtoneControl ringtoneControl;
+    private static RingtoneControl instance;
     private Context context;
     private MediaPlayer mediaPlayer;
 
@@ -14,15 +13,16 @@ public class RingtoneControl {
     }
 
     public static RingtoneControl getInstance(Context context) {
-        if (ringtoneControl == null)
+        if (instance == null)
         {
-            ringtoneControl = new RingtoneControl(context);
+            instance = new RingtoneControl(context);
         }
-        return ringtoneControl;
+        return instance;
     }
 
-    public void playRingtone() {
-        mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_RINGTONE_URI);
+    public void playRingtone(String ringtone) {
+        int id = getId(ringtone);
+        mediaPlayer = MediaPlayer.create(context, id);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
     }
@@ -31,6 +31,22 @@ public class RingtoneControl {
         if (mediaPlayer != null)
         {
             mediaPlayer.stop();
+        }
+    }
+
+    private int getId(String ringtone) {
+        switch (ringtone)
+        {
+            case "Lofi":
+                return R.raw.lofi;
+            case "Peaceful":
+                return R.raw.peaceful;
+            case "Relax sound":
+                return R.raw.relax_sound;
+            case "Relaxing":
+                return R.raw.relaxing;
+            default:
+                return 0;
         }
     }
 }

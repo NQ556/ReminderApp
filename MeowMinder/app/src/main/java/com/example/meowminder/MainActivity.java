@@ -5,10 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
@@ -20,33 +23,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
+        //Initialize
+        initializeUI();
+
         //View pager
-        viewPager2 = (ViewPager2) findViewById(R.id.view_pager);
         setUpViewPager();
 
         //Bottom navigation
+        selectOption();
+    }
+
+    private void initializeUI() {
+        viewPager2 = (ViewPager2) findViewById(R.id.view_pager);
         bottomNav = (BottomNavigationView) findViewById(R.id.bottom_nav);
-        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId())
-                {
-                    case R.id.home:
-                        viewPager2.setCurrentItem(0);
-                        break;
-                    case R.id.calendar:
-                        viewPager2.setCurrentItem(1);
-                        break;
-                    case R.id.notification:
-                        viewPager2.setCurrentItem(2);
-                        break;
-                    case R.id.setting:
-                        viewPager2.setCurrentItem(3);
-                        break;
-                }
-                return true;
-            }
-        });
     }
 
     private void setUpViewPager() {
@@ -73,6 +62,30 @@ public class MainActivity extends AppCompatActivity {
                         bottomNav.getMenu().findItem(R.id.setting).setChecked(true);
                         break;
                 }
+            }
+        });
+    }
+
+    private void selectOption() {
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId())
+                {
+                    case R.id.home:
+                        viewPager2.setCurrentItem(0);
+                        break;
+                    case R.id.calendar:
+                        viewPager2.setCurrentItem(1);
+                        break;
+                    case R.id.notification:
+                        viewPager2.setCurrentItem(2);
+                        break;
+                    case R.id.setting:
+                        viewPager2.setCurrentItem(3);
+                        break;
+                }
+                return true;
             }
         });
     }

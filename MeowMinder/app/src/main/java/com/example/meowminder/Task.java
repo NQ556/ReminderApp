@@ -3,7 +3,6 @@ package com.example.meowminder;
 public class Task {
     private String taskName;
     private boolean isDone;
-
     public Task() {
         taskName = "";
         isDone = false;

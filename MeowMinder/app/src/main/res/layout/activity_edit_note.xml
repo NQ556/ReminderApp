@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/light_pink"
-    tools:context=".AddNote">
+    tools:context=".EditNote">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,7 +13,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/add_note_header"/>
+            android:background="@drawable/edit_note_header"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -45,6 +45,35 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/title_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:drawableRight="@drawable/ic_edit"
+                    android:drawableTint="@color/pink"
+                    android:backgroundTint="@color/pink"
+                    android:textColor="@color/brown"
+                    android:inputType="text"
+                    android:textSize="@dimen/_15ssp"
+                    android:fontFamily="@font/oswald_regular"
+                    android:hint="@string/input"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tag"
+                    android:textSize="@dimen/_20ssp"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/oswald_semi_bold"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/pink"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_10sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_15sdp"/>
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/tag_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_15sdp"

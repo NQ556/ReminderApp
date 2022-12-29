@@ -20,8 +20,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Notification notification = new NotificationCompat.Builder(context, AddNote.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("Test notification")
-                .setContentText("This is a test notification")
+                .setContentTitle("Notification")
+                .setContentText("Your task is due")
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)

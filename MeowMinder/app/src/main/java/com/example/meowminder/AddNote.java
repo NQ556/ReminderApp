@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.NotificationChannel;
@@ -15,21 +16,28 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.example.meowminder.database.NoteDatabase;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class AddNote extends AppCompatActivity implements ItemTouchHelperListener{
     private TextView backButton;
@@ -38,7 +46,7 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
 
     private RecyclerView taskRcv;
     private TaskAdapter taskAdapter;
-    private ArrayList<Task> taskList;
+    private List<Task> taskList;
 
     private AppCompatEditText titleInput;
     private AppCompatEditText dateEdit;
@@ -59,33 +67,80 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
     private int tmpHour;
     private int tmpMinute;
 
+    private LinearLayout ringtoneLayout;
+    private String[] ringtones = {"Relaxing", "Relax sound", "Peaceful", "Lofi"};
+    private AutoCompleteTextView autoCompleteTextView;
+    private ArrayAdapter<String> arrayAdapter;
+    private String ringtone = "";
+
     private Calendar calendar;
     public static final String CHANNEL_ID = "Test";
-    public static int index = 0;
-    private String TAG = "Hi";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
         getSupportActionBar().hide();
 
+        //Initialize UI
+        initializeUI();
+
+        //Set up recycler view
+        setUpRecyclerView();
+
         //Back to home page
+        clickBackButton();
+
+        //Add task button
+        clickAddButton();
+
+        //Remove task by swiping left
+        removeTask();
+
+        //Get instance calendar
+        calendar = Calendar.getInstance();
+
+        //Select date
+        selectDate();
+
+        //Select time
+        selectTime();
+
+        //Create notification channel
+        createNotificationChannel();
+
+        //Drop down box to select ringtone
+        setDropbox();
+
+        //Check if the user want to be reminded with alarm
+        switchAlarmOnOff();
+
+        //Done button
+        clickDoneButton();
+    }
+
+    private void initializeUI() {
         backButton = (TextView) findViewById(R.id.back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadHome();
-            }
-        });
+        addButton = (MaterialButton) findViewById(R.id.add_button);
 
-        //Initialize title input edit text
         titleInput = (AppCompatEditText) findViewById(R.id.title_input);
-
-        //Initialize task edit text
         taskInput = (AppCompatEditText) findViewById(R.id.task_input);
 
-        //Initialize recycler view
+        dateEdit = (AppCompatEditText) findViewById(R.id.date);
+        timeEdit = (AppCompatEditText) findViewById(R.id.time);
+
+        autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.auto);
+
+        ringtoneLayout = (LinearLayout) findViewById(R.id.ringtone_layout);
+        alarmSwitch = (Switch) findViewById(R.id.alarm_switch);
+
+        doneButton = (ImageButton) findViewById(R.id.done_button);
+
         taskRcv = (RecyclerView) findViewById(R.id.task_rcv);
+    }
+
+    private void setUpRecyclerView() {
+        //Set grid layout
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
         taskRcv.setLayoutManager(gridLayoutManager);
 
@@ -95,23 +150,78 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
         //Initialize and set adapter
         taskAdapter = new TaskAdapter(taskList);
         taskRcv.setAdapter(taskAdapter);
+    }
 
-        //Add task button
-        addButton = (MaterialButton) findViewById(R.id.add_button);
+    private void clickBackButton() {
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadHome();
+            }
+        });
+    }
+
+    private void loadHome() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    private void clickAddButton() {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addNewTask();
             }
         });
+    }
 
-        //Remove task by swiping left
+    private void addNewTask() {
+        String taskName = taskInput.getText().toString().trim();
+        boolean isDone = false;
+
+        if (!taskName.isEmpty())
+        {
+            Task task = new Task(taskName, isDone);
+            taskList.add(task);
+            taskAdapter.notifyItemInserted(taskList.size()-1);
+            taskInput.setText("");
+            hideSoftKeyboard();
+        }
+
+        else
+        {
+            taskInput.setError("Task cannot be empty");
+        }
+    }
+
+    private void hideSoftKeyboard() {
+        try
+        {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+
+        catch (NullPointerException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void removeTask() {
         ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerViewItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(taskRcv);
+    }
 
-        //Get instance calendar
-        calendar = Calendar.getInstance();
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder) {
+        if (viewHolder instanceof TaskAdapter.TaskViewHolder)
+        {
+            int pos = viewHolder.getBindingAdapterPosition();
+            //Delete task
+            taskAdapter.deleteItem(pos);
+        }
+    }
 
+    private void selectDate() {
         //Set up date picker
         DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -132,6 +242,17 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
             }
         };
 
+        //Select date
+        dateEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(AddNote.this, R.style.date_picker_theme, date, calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+    private void selectTime() {
         //Set up time picker
         TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -161,18 +282,7 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
             }
         };
 
-        //Select date
-        dateEdit = (AppCompatEditText) findViewById(R.id.date);
-        dateEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DatePickerDialog(AddNote.this, R.style.date_picker_theme, date, calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
-
         //Select time
-        timeEdit = (AppCompatEditText) findViewById(R.id.time);
         timeEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -180,66 +290,46 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
                         calendar.get(Calendar.HOUR),calendar.get(Calendar.MINUTE), false).show();
             }
         });
+    }
 
-        //Set alarm
-        createNotificationChannel();
-        alarmSwitch = (Switch) findViewById(R.id.alarm_switch);
+    private void setDropbox() {
+        arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_ringtone, ringtones);
+        autoCompleteTextView.setAdapter(arrayAdapter);
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item = adapterView.getItemAtPosition(i).toString();
+                ringtone = item;
+            }
+        });
+    }
+
+    private void switchAlarmOnOff() {
         alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (alarmSwitch.isChecked())
                 {
                     isAlarmOn = true;
+                    ringtoneLayout.setVisibility(View.VISIBLE);
                 }
 
                 else
                 {
                     isAlarmOn = false;
+                    ringtoneLayout.setVisibility(View.GONE);
                 }
             }
         });
+    }
 
-        //Done button
-        doneButton = (ImageButton) findViewById(R.id.done_button);
+    private void clickDoneButton() {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setReminder();
+                addNewNote();
             }
         });
-    }
-
-    private void loadHome() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    private void addNewTask() {
-        String taskName = taskInput.getText().toString().trim();
-        boolean isDone = false;
-
-        if (!taskName.isEmpty())
-        {
-            Task task = new Task(taskName, isDone);
-            taskList.add(task);
-            taskAdapter.notifyItemInserted(taskList.size()-1);
-            taskInput.getText().clear();
-        }
-
-        else
-        {
-            taskInput.setError("Task cannot be empty");
-        }
-    }
-
-    @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder) {
-        if (viewHolder instanceof TaskAdapter.TaskViewHolder)
-        {
-            int pos = viewHolder.getBindingAdapterPosition();
-            //Delete task
-            taskAdapter.deleteItem(pos);
-        }
     }
 
     private void addNewNote() {
@@ -247,29 +337,18 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
         dateStr = dateEdit.getText().toString().trim();
         timeStr = timeEdit.getText().toString().trim();
 
-        if (titleStr.isEmpty())
+        if (titleStr.isEmpty() || dateStr.isEmpty() || timeStr.isEmpty() || taskList.size() == 0 || (isAlarmOn && ringtone.isEmpty()))
         {
-            titleInput.setError("Title cannot be empty");
-        }
-
-        else if (dateStr.isEmpty())
-        {
-            dateEdit.setError("Date cannot be empty");
-        }
-
-        else if (timeStr.isEmpty())
-        {
-            timeEdit.setError("Time cannot be empty");
-        }
-
-        else if (taskList.size() == 0)
-        {
-            Toast.makeText(AddNote.this, "You need to add at least one task", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddNote.this, "You need to fill all information", Toast.LENGTH_SHORT).show();
         }
 
         else
         {
-            Note note = new Note(titleStr, dateStr, timeStr, taskList, isAlarmOn);
+            setReminder();
+            Note note = new Note(titleStr, dateStr, timeStr, taskList, isAlarmOn, ringtone, Note.IS_NOT_DONE);
+            NoteDatabase.getInstance(this).noteDAO().insertNote(note);
+            Toast.makeText(AddNote.this, "Add new note successfully", Toast.LENGTH_SHORT).show();
+            loadHome();
         }
     }
 
@@ -293,26 +372,31 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent intent;
 
+        //Remind with ringtone
         if (isAlarmOn)
         {
             intent = new Intent(AddNote.this, AlarmReceiver_2.class);
-            Log.d(TAG, "HERE");
         }
 
+        //Remind without ringtone
         else
         {
             intent = new Intent(AddNote.this, AlarmReceiver.class);
         }
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(AddNote.this, getNotificationId(), intent, 0);
+
+        //Send title name
+        intent.putExtra("title", titleStr);
+        intent.putExtra("ringtone", ringtone);
+
+        //Create pending intent
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), getNotificationId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Set date and time of the upcoming task
         Calendar myAlarmDate = Calendar.getInstance();
         myAlarmDate.setTimeInMillis(System.currentTimeMillis());
         myAlarmDate.set(tmpYear, tmpMonth, tmpDay, tmpHour, tmpMinute, 0);
-        Log.d(TAG, Integer.toString(index));
         alarmManager.set(AlarmManager.RTC_WAKEUP, myAlarmDate.getTimeInMillis(), pendingIntent);
         Toast.makeText(AddNote.this, "Set alarm successfully", Toast.LENGTH_SHORT).show();
-        loadHome();
     }
 
     private int getNotificationId() {

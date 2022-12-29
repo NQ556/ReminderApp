@@ -15,11 +15,14 @@
     <string name="add_tasks">Add tasks</string>
 
     <string name="title">Title</string>
+    <string name="tag">Tag</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="tasks">Tasks</string>
     <string name="alarm">Alarm</string>
     <string name="set_alarm">Set alarm</string>
+    <string name="select_ringtone">Select ringtone</string>
+    <string name="ringtone">Ringtone</string>
 
     <string name="input">Input here</string>
     <string name="add">Add</string>
@@ -27,4 +30,13 @@
 
     <string name="channel_name">Test</string>
     <string name="channel_description">This is a test notification</string>
+
+    <string name="cancel">Cancel</string>
+
+    <string name="dummy">You have completed 3 \nout of 5 of your goals</string>
+
+    <string name="to_do">TO DO</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="edit">Edit</string>
 </resources>

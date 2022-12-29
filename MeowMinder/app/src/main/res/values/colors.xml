@@ -13,6 +13,8 @@
     <color name="switch_off_color">#E5E9EB</color>
     <color name="light_pink">#F5DEDE</color>
     <color name="pink_2">#F2CFCD</color>
+    <color name="pink_3">#FBAAA6</color>
     <color name="brown">#380824</color>
     <color name="red">#CD5F5F</color>
+    <color name="light_pink_2">#FDF1F2</color>
 </resources>
