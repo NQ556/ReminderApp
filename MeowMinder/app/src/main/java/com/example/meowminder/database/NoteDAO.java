@@ -3,6 +3,7 @@ package com.example.meowminder.database;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.meowminder.Note;
 
@@ -22,4 +23,7 @@ public interface NoteDAO {
 
     @Query("DELETE FROM note")
     void delete();
+
+    @Update
+    void updateNote(Note note);
 }

@@ -16,6 +16,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 import com.example.meowminder.database.NoteDatabase;
 import com.google.android.material.button.MaterialButton;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,12 +62,6 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
 
     private Switch alarmSwitch;
     private AlarmManager alarmManager;
-
-    private int tmpDay;
-    private int tmpMonth;
-    private int tmpYear;
-    private int tmpHour;
-    private int tmpMinute;
 
     private LinearLayout ringtoneLayout;
     private String[] ringtones = {"Relaxing", "Relax sound", "Peaceful", "Lofi"};
@@ -105,9 +101,6 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
 
         //Select time
         selectTime();
-
-        //Create notification channel
-        createNotificationChannel();
 
         //Drop down box to select ringtone
         setDropbox();
@@ -229,9 +222,6 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, month);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                tmpDay = dayOfMonth;
-                tmpMonth = month;
-                tmpYear = year;
                 updateCalendar();
             }
 
@@ -259,8 +249,6 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
                 calendar.set(Calendar.HOUR, hour);
                 calendar.set(Calendar.MINUTE, minute);
-                tmpHour = hour;
-                tmpMinute = minute;
                 updateCalendar(hour, minute);
             }
 
@@ -344,31 +332,16 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
 
         else
         {
-            setReminder();
-            Note note = new Note(titleStr, dateStr, timeStr, taskList, isAlarmOn, ringtone, Note.IS_NOT_DONE);
+            int intentCode = getNotificationId();
+            setReminder(intentCode);
+            Note note = new Note(titleStr, dateStr, timeStr, taskList, isAlarmOn, ringtone, Note.IS_NOT_DONE, intentCode);
             NoteDatabase.getInstance(this).noteDAO().insertNote(note);
             Toast.makeText(AddNote.this, "Add new note successfully", Toast.LENGTH_SHORT).show();
             loadHome();
         }
     }
 
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Channel_1";
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-    private void setReminder() {
+    private void setReminder(int intentCode) {
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent intent;
 
@@ -389,14 +362,19 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
         intent.putExtra("ringtone", ringtone);
 
         //Create pending intent
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), getNotificationId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), intentCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Set date and time of the upcoming task
+        String format = "dd/MM/yyyy hh:mm a";
         Calendar myAlarmDate = Calendar.getInstance();
-        myAlarmDate.setTimeInMillis(System.currentTimeMillis());
-        myAlarmDate.set(tmpYear, tmpMonth, tmpDay, tmpHour, tmpMinute, 0);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        try {
+            myAlarmDate.setTime(simpleDateFormat.parse(dateStr + " " + timeStr));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         alarmManager.set(AlarmManager.RTC_WAKEUP, myAlarmDate.getTimeInMillis(), pendingIntent);
-        Toast.makeText(AddNote.this, "Set alarm successfully", Toast.LENGTH_SHORT).show();
     }
 
     private int getNotificationId() {

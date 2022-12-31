@@ -37,7 +37,7 @@ public class HomeFragment extends Fragment {
 
         //Initialize UI
         initializeUI();
-
+        
         //Set up recycler view
         setUpRecyclerView();
 

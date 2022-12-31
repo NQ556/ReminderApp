@@ -13,18 +13,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.meowminder.Converters;
 import com.example.meowminder.Note;
 
-@Database(entities = {Note.class}, version = 2)
+@Database(entities = {Note.class}, version = 4)
 @TypeConverters({Converters.class})
 public abstract class NoteDatabase extends RoomDatabase {
 
-    static Migration migration_from_1_to_2 = new Migration(1, 2) {
+    static Migration migration = new Migration(3, 4) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE note ADD COLUMN ringtone TEXT");
-            database.execSQL("CREATE TABLE note_tmp(id INTEGER PRIMARY KEY NOT NULL, title TEXT, date TEXT, time TEXT, taskList TEXT, isAlarmOn INTEGER NOT NULL, ringtone TEXT, status INTEGER NOT NULL)");
-            database.execSQL("INSERT INTO note_tmp SELECT id, title, date, time, taskList, isAlarmOn, ringtone, status FROM note");
-            database.execSQL("DROP TABLE note");
-            database.execSQL("ALTER TABLE note_tmp RENAME TO note");
+            database.execSQL("ALTER TABLE note ADD COLUMN intentCode INTEGER NOT NULL DEFAULT '0'");
         }
     };
 
@@ -36,7 +32,7 @@ public abstract class NoteDatabase extends RoomDatabase {
         {
             instance = Room.databaseBuilder(context.getApplicationContext(), NoteDatabase.class, DATABASE_NAME)
                     .allowMainThreadQueries()
-                    .addMigrations(migration_from_1_to_2)
+                    .addMigrations(migration)
                     .build();
         }
         return instance;

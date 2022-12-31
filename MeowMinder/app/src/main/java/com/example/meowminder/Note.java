@@ -1,5 +1,6 @@
 package com.example.meowminder;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import java.util.List;
@@ -20,6 +21,7 @@ public class Note {
     private boolean isAlarmOn;
     private int status;
     private String ringtone;
+    private int intentCode;
 
     public Note() {
         id = 0;
@@ -30,9 +32,10 @@ public class Note {
         isAlarmOn = false;
         status = IS_NOT_DONE;
         ringtone = "";
+        intentCode = 0;
     }
 
-    public Note(String title, String date, String time, List<Task> taskList, boolean isAlarmOn, String ringtone, int status) {
+    public Note(String title, String date, String time, List<Task> taskList, boolean isAlarmOn, String ringtone, int status, int intentCode) {
         this.title = title;
         this.date = date;
         this.time = time;
@@ -40,6 +43,7 @@ public class Note {
         this.isAlarmOn = isAlarmOn;
         this.ringtone = ringtone;
         this.status = status;
+        this.intentCode = intentCode;
     }
 
     public int getId() {
@@ -116,5 +120,13 @@ public class Note {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getIntentCode() {
+        return intentCode;
+    }
+
+    public void setIntentCode(int intentCode) {
+        this.intentCode = intentCode;
     }
 }

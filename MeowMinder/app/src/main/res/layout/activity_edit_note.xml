@@ -61,35 +61,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tag"
-                    android:textSize="@dimen/_20ssp"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/oswald_semi_bold"
-                    android:background="@drawable/rounded_corner"
-                    android:backgroundTint="@color/pink"
-                    android:paddingStart="@dimen/_10sdp"
-                    android:paddingEnd="@dimen/_10sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:layout_marginStart="@dimen/_15sdp"/>
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/tag_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_15sdp"
-                    android:layout_marginEnd="@dimen/_15sdp"
-                    android:drawableRight="@drawable/ic_edit"
-                    android:drawableTint="@color/pink"
-                    android:backgroundTint="@color/pink"
-                    android:textColor="@color/brown"
-                    android:inputType="text"
-                    android:textSize="@dimen/_15ssp"
-                    android:fontFamily="@font/oswald_regular"
-                    android:hint="@string/input"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@string/date"
                     android:textSize="@dimen/_20ssp"
                     android:textColor="@color/white"
@@ -306,6 +277,17 @@
             android:background="@drawable/done_button"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/_15sdp"/>
+
+        <TextView
+            android:id="@+id/delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete"
+            android:textColor="@color/pink"
+            android:textSize="@dimen/_40ssp"
+            android:fontFamily="@font/oswald_semi_bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/_15sdp"/>
 
         <TextView
             android:id="@+id/back_button"

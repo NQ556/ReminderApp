@@ -145,6 +145,7 @@ public class ViewNote extends AppCompatActivity {
 
     private void loadEditNote() {
         Intent intent = new Intent(this, EditNote.class);
+        intent.putExtra("id", id);
         startActivity(intent);
     }
 
