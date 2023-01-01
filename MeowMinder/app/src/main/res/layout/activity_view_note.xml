@@ -37,6 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_gravity="center_vertical"
                 android:orientation="vertical"
                 android:padding="@dimen/_10sdp"
                 android:background="@drawable/rounded_corner"
@@ -61,26 +62,53 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/edit_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_marginStart="@dimen/_20sdp">
-                <TextView
+                <LinearLayout
+                    android:id="@+id/edit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/edit"
-                    android:fontFamily="@font/oswald_regular"
-                    android:textSize="@dimen/_25sdp"
-                    android:textColor="@color/blue"/>
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/edit"
+                        android:fontFamily="@font/oswald_regular"
+                        android:textSize="@dimen/_25sdp"
+                        android:textColor="@color/blue"/>
 
-                <ImageView
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ic_edit"
+                        android:layout_gravity="bottom"
+                        android:backgroundTint="@color/blue"
+                        android:layout_marginBottom="@dimen/_5sdp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/delete_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/ic_edit"
-                    android:layout_gravity="bottom"
-                    android:backgroundTint="@color/blue"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/delete"
+                        android:fontFamily="@font/oswald_regular"
+                        android:textSize="@dimen/_25sdp"
+                        android:textColor="@color/blue"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
+                        android:background="@drawable/ic_delete"
+                        android:layout_gravity="bottom"
+                        android:backgroundTint="@color/blue"
+                        android:layout_marginBottom="@dimen/_5sdp"/>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 

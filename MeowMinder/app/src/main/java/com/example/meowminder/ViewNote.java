@@ -5,6 +5,10 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,11 +18,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.meowminder.database.NoteDatabase;
 import com.google.android.material.button.MaterialButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ViewNote extends AppCompatActivity {
@@ -32,6 +40,7 @@ public class ViewNote extends AppCompatActivity {
     private ImageButton backButton;
     private LinearLayout editButton;
     private ImageView yesButton;
+    private LinearLayout deleteButton;
 
     private RecyclerView taskRcv;
     private List<Task> taskList;
@@ -61,12 +70,16 @@ public class ViewNote extends AppCompatActivity {
 
         //Edit button
         clickEditButton();
+
+        //Delete button
+        clickDeleteButton();
     }
 
     private void initializeUI() {
         backButton = (ImageButton) findViewById(R.id.back_button);
         yesButton = (ImageButton) findViewById(R.id.yes_button);
         editButton = (LinearLayout) findViewById(R.id.edit_button);
+        deleteButton = (LinearLayout) findViewById(R.id.delete_button);
 
         date = (TextView) findViewById(R.id.date);
         time = (TextView) findViewById(R.id.time);
@@ -156,5 +169,71 @@ public class ViewNote extends AppCompatActivity {
                 loadEditNote();
             }
         });
+    }
+
+    private void clickDeleteButton() {
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteNote();
+            }
+        });
+    }
+
+    private void deleteNote() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirm delete note")
+                .setMessage("Do you want to delete this note?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        cancelReminder();
+                        NoteDatabase.getInstance(ViewNote.this).noteDAO().deleteNote(note);
+                        Toast.makeText(ViewNote.this, "Delete note successfully", Toast.LENGTH_SHORT).show();
+                        loadHome();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void cancelReminder() {
+        //Recreate pending intent
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent;
+
+        //Remind with ringtone
+        if (note.getIsAlarmOn())
+        {
+            intent = new Intent(ViewNote.this, AlarmReceiver_2.class);
+        }
+
+        //Remind without ringtone
+        else
+        {
+            intent = new Intent(ViewNote.this, AlarmReceiver.class);
+        }
+
+        //Send title name
+        intent.putExtra("title", note.getTitle());
+        intent.putExtra("ringtone", note.getRingtone());
+
+        //Create pending intent
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), note.getIntentCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Set date and time of the upcoming task
+        String format = "dd/MM/yyyy hh:mm a";
+        Calendar myAlarmDate = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        try {
+            myAlarmDate.setTime(simpleDateFormat.parse(note.getDate() + " " + note.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, myAlarmDate.getTimeInMillis(), pendingIntent);
+
+        //Cancel pending intent
+        alarmManager.cancel(pendingIntent);
     }
 }
