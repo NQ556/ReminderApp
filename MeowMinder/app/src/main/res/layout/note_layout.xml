@@ -69,12 +69,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="@dimen/_28sdp">
+            android:layout_marginStart="@dimen/_20sdp">
             <CheckBox
                 android:id="@+id/checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/white"/>
+                android:buttonTint="@color/white"
+                android:enabled="false"
+                android:layout_marginStart="@dimen/_8sdp"/>
 
             <TextView
                 android:id="@+id/first_task"

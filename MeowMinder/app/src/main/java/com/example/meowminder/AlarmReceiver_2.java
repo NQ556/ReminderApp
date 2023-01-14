@@ -11,6 +11,8 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.meowminder.database.NoteDatabase;
+
 import java.util.Date;
 
 public class AlarmReceiver_2 extends BroadcastReceiver {
@@ -21,16 +23,17 @@ public class AlarmReceiver_2 extends BroadcastReceiver {
         //Create alarm intent
         Intent intent1 = new Intent(context, Alarm.class);
 
-        //Get title name, ringtone
-        String titleStr = intent.getStringExtra("title");
-        String ringtoneStr = intent.getStringExtra("ringtone");
+        //Get note's id
+        int id = intent.getIntExtra("id", 0);
 
-        //Send title name, ringtone to Alarm
-        intent1.putExtra("title", titleStr);
-        intent1.putExtra("ringtone", ringtoneStr);
+        //Get note from database
+        Note note = NoteDatabase.getInstance(context).noteDAO().getNote(id);
+
+        //Send note's id Alarm
+        intent1.putExtra("id", id);
 
         //Play ringtone
-        RingtoneControl.getInstance(context).playRingtone(ringtoneStr);
+        RingtoneControl.getInstance(context).playRingtone(note.getRingtone());
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, getNotificationId(), intent1, PendingIntent.FLAG_UPDATE_CURRENT);
 

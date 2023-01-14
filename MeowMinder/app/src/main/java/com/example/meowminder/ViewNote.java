@@ -50,6 +50,8 @@ public class ViewNote extends AppCompatActivity {
     private Switch alarmSwitch;
     private AppCompatEditText ringtone;
 
+    private TextView resetButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +60,9 @@ public class ViewNote extends AppCompatActivity {
 
         //Initialize UI
         initializeUI();
+
+        //Show correct layout for different status
+        showLayout();
 
         //Get note from database
         getNoteFromDatabase();
@@ -73,6 +78,12 @@ public class ViewNote extends AppCompatActivity {
 
         //Delete button
         clickDeleteButton();
+
+        //Click yes button
+        clickYesButton();
+
+        //Click reset button for overdue note
+        clickResetButton();
     }
 
     private void initializeUI() {
@@ -90,6 +101,24 @@ public class ViewNote extends AppCompatActivity {
         onOff = (TextView) findViewById(R.id.on_off);
         alarmSwitch = (Switch) findViewById(R.id.alarm_switch);
         ringtone = (AppCompatEditText) findViewById(R.id.ringtone);
+
+        resetButton = (TextView) findViewById(R.id.reset_button);
+    }
+
+    private void showLayout() {
+        int type = getIntent().getIntExtra("status", 0);
+
+        if (type == Note.IS_NOT_DONE)
+        {
+            editButton.setVisibility(View.VISIBLE);
+            resetButton.setVisibility(View.GONE);
+        }
+
+        else if (type == Note.IS_OVERDUE)
+        {
+            editButton.setVisibility(View.GONE);
+            resetButton.setVisibility(View.VISIBLE);
+        }
     }
 
     private void getNoteFromDatabase() {
@@ -151,7 +180,8 @@ public class ViewNote extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadHome();
+                //Update task's status and load homepage
+                updateTaskStatus(false);
             }
         });
     }
@@ -166,6 +196,9 @@ public class ViewNote extends AppCompatActivity {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Update task's status
+                updateTaskStatus(true);
+                //Load edit note
                 loadEditNote();
             }
         });
@@ -194,6 +227,42 @@ public class ViewNote extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void clickYesButton() {
+        String msg = "Do you want to mark this note as done?";
+
+        yesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                markAsDone(msg, false);
+            }
+        });
+    }
+
+    private void markAsDone(String msg, boolean isBackHome) {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirm mark as done")
+                .setMessage(msg)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        cancelReminder();
+                        NoteDatabase.getInstance(ViewNote.this).noteDAO().deleteNote(note);
+                        Toast.makeText(ViewNote.this, "Congratulate on finishing all of your tasks", Toast.LENGTH_SHORT).show();
+                        loadHome();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (isBackHome)
+                        {
+                            loadHome();
+                        }
+                    }
+                })
                 .show();
     }
 
@@ -235,5 +304,52 @@ public class ViewNote extends AppCompatActivity {
 
         //Cancel pending intent
         alarmManager.cancel(pendingIntent);
+    }
+
+    private void clickResetButton() {
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateTaskStatus(true);
+                loadEditNote();
+            }
+        });
+    }
+
+    private boolean checkAllTasks(List<Task> list) {
+        for (int i = 0; i < list.size(); i++)
+        {
+            if (!list.get(i).getIsDone())
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void updateTaskStatus(boolean isEdit) {
+        note.setTaskList(taskList);
+        NoteDatabase.getInstance(ViewNote.this).noteDAO().updateNote(note);
+
+        if (!isEdit)
+        {
+            if (checkAllTasks(taskList))
+            {
+                String msg = "You have completed all tasks. Do you want to mark this note as done?";
+                markAsDone(msg, true);
+            }
+
+            else
+            {
+                loadHome();
+            }
+        }
+    }
+
+    //Override back button on phone
+    @Override
+    public void onBackPressed() {
+        updateTaskStatus(false);
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface NoteDAO {
     @Insert
-    void insertNote(Note note);
+    long insertNote(Note note);
 
     @Query("SELECT * FROM note")
     List<Note> getNoteList();

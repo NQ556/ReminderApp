@@ -3,6 +3,8 @@ package com.example.meowminder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,31 @@ public class TaskViewAdapter extends RecyclerView.Adapter<TaskViewAdapter.TaskVi
         }
 
         holder.taskName.setText(task.getTaskName());
+
+        if (task.getIsDone())
+        {
+            holder.checkBox.setChecked(true);
+        }
+
+        else
+        {
+            holder.checkBox.setChecked(false);
+        }
+
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (holder.checkBox.isChecked())
+                {
+                    task.setIsDone(true);
+                }
+
+                else
+                {
+                    task.setIsDone(false);
+                }
+            }
+        });
     }
 
     @Override
@@ -47,11 +74,13 @@ public class TaskViewAdapter extends RecyclerView.Adapter<TaskViewAdapter.TaskVi
 
     public class TaskViewViewHolder extends RecyclerView.ViewHolder {
         private TextView taskName;
+        private CheckBox checkBox;
 
         public TaskViewViewHolder(@NonNull View itemView) {
             super(itemView);
 
             taskName = (TextView) itemView.findViewById(R.id.task_name);
+            checkBox = (CheckBox) itemView.findViewById(R.id.checkbox);
         }
     }
 }

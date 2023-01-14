@@ -8,14 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -74,6 +71,9 @@ public class EditNote extends AppCompatActivity implements ItemTouchHelperListen
 
     private ImageButton doneButton;
     private TextView backButton;
+
+    private Date deadlineDate;
+    private Date currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -339,6 +339,36 @@ public class EditNote extends AppCompatActivity implements ItemTouchHelperListen
         return true;
     }
 
+    private boolean isValidDateTime() {
+        String format = "dd/MM/yyyy hh:mm a";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+
+        //Get deadline date
+        try {
+            deadlineDate = simpleDateFormat.parse(dateStr + " " + timeStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        //Get current date
+        try {
+            currentDate = simpleDateFormat.parse(simpleDateFormat.format(new Date()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        //Check if deadline date is after than current date or not
+        if (deadlineDate.after(currentDate))
+        {
+            return true;
+        }
+
+        else
+        {
+            return false;
+        }
+    }
+
     private void editNote() {
         titleStr = titleInput.getText().toString().trim();
         dateStr = dateEdit.getText().toString().trim();
@@ -348,6 +378,11 @@ public class EditNote extends AppCompatActivity implements ItemTouchHelperListen
         if (!isValid())
         {
             Toast.makeText(this, "You need to fill all information", Toast.LENGTH_SHORT).show();
+        }
+
+        else if (!isValidDateTime())
+        {
+            Toast.makeText(this, "The deadline cannot be before today", Toast.LENGTH_SHORT).show();
         }
 
         else
@@ -401,17 +436,9 @@ public class EditNote extends AppCompatActivity implements ItemTouchHelperListen
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), intentCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Set date and time of the upcoming task
-        String format = "dd/MM/yyyy hh:mm a";
         Calendar myAlarmDate = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-        try {
-            myAlarmDate.setTime(simpleDateFormat.parse(dateStr + " " + timeStr));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
+        myAlarmDate.setTime(deadlineDate);
         alarmManager.set(AlarmManager.RTC_WAKEUP, myAlarmDate.getTimeInMillis(), pendingIntent);
-        Toast.makeText(EditNote.this, "Set alarm successfully", Toast.LENGTH_SHORT).show();
     }
 
     private void clickDoneButton() {

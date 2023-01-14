@@ -28,6 +28,7 @@ public class HomeFragment extends Fragment {
 
     private NoteAdapter noteAdapter;
     private List<Note> noteList;
+    private List<Note> notDoneList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,6 +57,16 @@ public class HomeFragment extends Fragment {
         noNoteLayout = (LinearLayout) view.findViewById(R.id.no_note_layout);
     }
 
+    private void loadNotDoneList() {
+        for (int i = 0; i < noteList.size(); i++)
+        {
+            if (noteList.get(i).getStatus() == Note.IS_NOT_DONE)
+            {
+                notDoneList.add(noteList.get(i));
+            }
+        }
+    }
+
     private void setUpRecyclerView() {
         //Set grid layout
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
@@ -63,15 +74,17 @@ public class HomeFragment extends Fragment {
 
         //Get list of notes from database
         noteList = new ArrayList<>();
+        notDoneList = new ArrayList<>();
         noteList = NoteDatabase.getInstance(getActivity()).noteDAO().getNoteList();
+        loadNotDoneList();
 
         //Set adapter
-        noteAdapter = new NoteAdapter(noteList);
+        noteAdapter = new NoteAdapter(notDoneList);
         noteRcv.setAdapter(noteAdapter);
     }
 
     private void showNotes() {
-        if (noteList.size() > 0)
+        if (notDoneList.size() > 0)
         {
             noteRcv.setVisibility(View.VISIBLE);
             noNoteLayout.setVisibility(View.INVISIBLE);

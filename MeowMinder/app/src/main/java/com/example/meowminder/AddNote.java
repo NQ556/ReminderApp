@@ -72,6 +72,9 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
     private Calendar calendar;
     public static final String CHANNEL_ID = "Test";
 
+    private Date currentDate;
+    private Date deadlineDate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -320,6 +323,36 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
         });
     }
 
+    private boolean isValidDateTime() {
+        String format = "dd/MM/yyyy hh:mm a";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+
+        //Get deadline date
+        try {
+            deadlineDate = simpleDateFormat.parse(dateStr + " " + timeStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        //Get current date
+        try {
+            currentDate = simpleDateFormat.parse(simpleDateFormat.format(new Date()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        //Check if deadline date is after than current date or not
+        if (deadlineDate.after(currentDate))
+        {
+            return true;
+        }
+
+        else
+        {
+            return false;
+        }
+    }
+
     private void addNewNote() {
         titleStr = titleInput.getText().toString().trim();
         dateStr = dateEdit.getText().toString().trim();
@@ -330,18 +363,28 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
             Toast.makeText(AddNote.this, "You need to fill all information", Toast.LENGTH_SHORT).show();
         }
 
+        else if (!isValidDateTime())
+        {
+            Toast.makeText(this, "The deadline cannot be before today", Toast.LENGTH_SHORT).show();
+        }
+
         else
         {
             int intentCode = getNotificationId();
-            setReminder(intentCode);
+
+            //Create note and add to database
             Note note = new Note(titleStr, dateStr, timeStr, taskList, isAlarmOn, ringtone, Note.IS_NOT_DONE, intentCode);
-            NoteDatabase.getInstance(this).noteDAO().insertNote(note);
+            int id = (int) NoteDatabase.getInstance(this).noteDAO().insertNote(note);
+
+            //Get current note's id and set reminder
+            //int id = note.getId();
+            setReminder(intentCode, id);
             Toast.makeText(AddNote.this, "Add new note successfully", Toast.LENGTH_SHORT).show();
             loadHome();
         }
     }
 
-    private void setReminder(int intentCode) {
+    private void setReminder(int intentCode, int id) {
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent intent;
 
@@ -357,23 +400,15 @@ public class AddNote extends AppCompatActivity implements ItemTouchHelperListene
             intent = new Intent(AddNote.this, AlarmReceiver.class);
         }
 
-        //Send title name
-        intent.putExtra("title", titleStr);
-        intent.putExtra("ringtone", ringtone);
+        //Send id
+        intent.putExtra("id", id);
 
         //Create pending intent
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), intentCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Set date and time of the upcoming task
-        String format = "dd/MM/yyyy hh:mm a";
         Calendar myAlarmDate = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-        try {
-            myAlarmDate.setTime(simpleDateFormat.parse(dateStr + " " + timeStr));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
+        myAlarmDate.setTime(deadlineDate);
         alarmManager.set(AlarmManager.RTC_WAKEUP, myAlarmDate.getTimeInMillis(), pendingIntent);
     }
 

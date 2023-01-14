@@ -2,9 +2,11 @@ package com.example.meowminder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,6 +34,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         Note note = noteList.get(position);
+        List<Task> taskList = note.getTaskList();
 
         if (note == null)
         {
@@ -44,9 +47,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         //Set time
         holder.time.setText(note.getTime());
 
-
         //Set first task
         holder.firstTask.setText(note.getFirstTask());
+
+        //Check first task status
+        if (taskList.get(0).getIsDone())
+        {
+            holder.checkBox.setChecked(true);
+        }
+
+        else
+        {
+            holder.checkBox.setChecked(false);
+        }
 
         //Set notification
         boolean isAlarmOn = note.getIsAlarmOn();
@@ -65,6 +78,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ViewNote.class);
+                int status = 0;
+
+                if (note.getStatus() == Note.IS_OVERDUE)
+                {
+                    status = Note.IS_OVERDUE;
+                }
+
+                else
+                {
+                    status = Note.IS_NOT_DONE;
+                }
+
+                intent.putExtra("status", status);
                 intent.putExtra("id", note.getId());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
@@ -86,6 +112,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         private TextView time;
         private TextView firstTask;
         private ImageView notification;
+        private CheckBox checkBox;
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -94,6 +121,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             time = (TextView) itemView.findViewById(R.id.time);
             firstTask = (TextView) itemView.findViewById(R.id.first_task);
             notification = (ImageView) itemView.findViewById(R.id.notification);
+            checkBox = (CheckBox) itemView.findViewById(R.id.checkbox);
         }
     }
 }
