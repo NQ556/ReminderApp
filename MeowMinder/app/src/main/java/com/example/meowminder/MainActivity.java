@@ -66,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
                     case 2:
                         bottomNav.getMenu().findItem(R.id.notification).setChecked(true);
                         break;
-                    case 3:
-                        bottomNav.getMenu().findItem(R.id.setting).setChecked(true);
-                        break;
                 }
             }
         });
@@ -88,9 +85,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.notification:
                         viewPager2.setCurrentItem(2);
-                        break;
-                    case R.id.setting:
-                        viewPager2.setCurrentItem(3);
                         break;
                 }
                 return true;
