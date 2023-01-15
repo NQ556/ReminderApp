@@ -74,10 +74,16 @@ public class NotificationFragment extends Fragment {
         notificationRcv.setAdapter(noteAdapter);
 
         //Check if there is any notes
-        if (overdueNoteList != null)
+        if (overdueNoteList.size() > 0)
         {
             noNotificationLayout.setVisibility(View.INVISIBLE);
             notificationRcv.setVisibility(View.VISIBLE);
+        }
+
+        else
+        {
+            noNotificationLayout.setVisibility(View.VISIBLE);
+            notificationRcv.setVisibility(View.INVISIBLE);
         }
     }
 }

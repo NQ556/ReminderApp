@@ -22,6 +22,12 @@ public interface NoteDAO {
     @Query("SELECT * FROM note WHERE id = :id")
     Note getNote(int id);
 
+    @Query("SELECT * FROM note WHERE status = 1")
+    List<Note> getNotDoneList();
+
+    @Query("SELECT * FROM note WHERE status = 1 AND date = :date")
+    List<Note> getNotDoneListByDate(String date);
+
     @Query("DELETE FROM note")
     void delete();
 
